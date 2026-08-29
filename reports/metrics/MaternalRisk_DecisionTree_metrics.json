@@ -1,0 +1,6 @@
+{
+  "model": "MaternalRisk_DecisionTree",
+  "accuracy": 0.6847,
+  "recall_weighted": 0.6847,
+  "f1_weighted": 0.6552
+}

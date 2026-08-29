@@ -1,0 +1,6 @@
+{
+  "model": "DecisionTree",
+  "accuracy": 0.598,
+  "recall_weighted": 0.598,
+  "f1_weighted": 0.6515
+}

@@ -1,0 +1,10 @@
+IADT - Fase 1 - Tech challenge A.pdf
+CLAUDE.md
+
+# Ambiente local
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+
+# Datasets grandes do SIASI (download em dados.gov.br; o tratado tem >50 MB)
+.~lock.*#

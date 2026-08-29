@@ -1,0 +1,5 @@
+Modelo,Features,Accuracy,Recall classe A,F1 (weighted)
+LogisticRegression,somente originais (baseline),0.6156,0.6046,0.6673
+LogisticRegression,originais + derivadas,0.6358,0.6171,0.6843
+DecisionTree,somente originais (baseline),0.4315,0.8388,0.4819
+DecisionTree,originais + derivadas,0.598,0.7908,0.6515

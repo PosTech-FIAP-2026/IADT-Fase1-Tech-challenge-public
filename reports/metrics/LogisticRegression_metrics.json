@@ -1,0 +1,6 @@
+{
+  "model": "LogisticRegression",
+  "accuracy": 0.6358,
+  "recall_weighted": 0.6358,
+  "f1_weighted": 0.6843
+}

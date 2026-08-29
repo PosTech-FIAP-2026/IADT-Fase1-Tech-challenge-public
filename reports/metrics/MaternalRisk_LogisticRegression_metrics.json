@@ -1,0 +1,6 @@
+{
+  "model": "MaternalRisk_LogisticRegression",
+  "accuracy": 0.601,
+  "recall_weighted": 0.601,
+  "f1_weighted": 0.5895
+}

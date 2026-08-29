@@ -12,12 +12,12 @@ RAW_DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "siasi" / "raw"
 
 def load_csv(filename: str, sep: str = ";", encoding: str = "utf-8") -> pd.DataFrame:
     """
-    Carrega um arquivo CSV do diretório data/raw/.
+    Carrega um arquivo CSV do diretório data/siasi/raw/.
 
     Parâmetros
     ----------
     filename : str
-        Nome do arquivo (ex.: 'siasi_gestacional.csv').
+        Nome do arquivo (ex.: 'prenatal_microdados_2024.csv').
     sep : str
         Separador de campos (padrão ';' para arquivos do GovBr).
     encoding : str
@@ -34,7 +34,7 @@ def load_csv(filename: str, sep: str = ";", encoding: str = "utf-8") -> pd.DataF
             f"Arquivo não encontrado: {filepath}\n"
             "Faça o download do dataset em:\n"
             "https://dados.gov.br/dados/conjuntos-dados/acompanhamento-gestacional-siasi\n"
-            "e salve em data/raw/"
+            "e salve em data/siasi/raw/"
         )
     df = pd.read_csv(filepath, sep=sep, encoding=encoding, low_memory=False)
     print(f"Dataset carregado: {df.shape[0]} linhas × {df.shape[1]} colunas")

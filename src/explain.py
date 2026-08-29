@@ -102,6 +102,10 @@ def plot_shap(
     if feature_names is None or len(feature_names) != X_transformed.shape[1]:
         feature_names = [f"feature_{i}" for i in range(X_transformed.shape[1])]
 
+    # Semente fixa: o KernelExplainer (modelos lineares) usa amostragem aleatória;
+    # sem isso, cada execução geraria valores SHAP ligeiramente diferentes
+    np.random.seed(42)
+
     # Seleciona o explainer adequado
     try:
         if hasattr(model, "feature_importances_"):

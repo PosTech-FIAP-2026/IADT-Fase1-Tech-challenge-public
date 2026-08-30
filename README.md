@@ -46,8 +46,12 @@ IADT-Fase1-Tech-challenge/
 │   ├── evaluate.py        ← Avaliação e métricas
 │   └── explain.py         ← Feature importance e SHAP
 ├── reports/
-│   ├── figures/           ← Gráficos gerados (EDA, matrizes de confusão, SHAP, ablação...)
-│   └── metrics/           ← Métricas em JSON/TXT/CSV
+│   ├── figures/
+│   │   ├── siasi/            ← Gráficos do estudo principal (EDA, matrizes de confusão, SHAP, ablação...)
+│   │   └── maternal_risk/    ← Gráficos do estudo comparativo
+│   └── metrics/
+│       ├── siasi/            ← Métricas em JSON/TXT/CSV do estudo principal
+│       └── maternal_risk/    ← Métricas do estudo comparativo
 ├── requirements.txt
 └── README.md
 ```
@@ -165,4 +169,4 @@ O resultado do modelo é uma priorização da fila de atendimento; a decisão so
 
 ## Reprodutibilidade
 
-Todos os experimentos utilizam `random_state=42`. Os notebooks executados, as figuras (`reports/figures/`) e as métricas (`reports/metrics/`) estão versionados no repositório.
+Todos os experimentos utilizam `random_state=42`. Os notebooks executados, as figuras (`reports/figures/`) e as métricas (`reports/metrics/`), separadas por dataset, estão versionados no repositório.

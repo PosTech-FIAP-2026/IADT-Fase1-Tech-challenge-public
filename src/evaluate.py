@@ -1,7 +1,7 @@
 """
 evaluate.py
 Avaliação dos modelos treinados com métricas de classificação e matriz de confusão.
-Salva relatórios em reports/metrics/.
+Salva relatórios em reports/metrics/<subdir>/, onde subdir identifica o dataset.
 """
 
 import json
@@ -23,8 +23,13 @@ from sklearn.pipeline import Pipeline
 
 METRICS_DIR = Path(__file__).resolve().parents[1] / "reports" / "metrics"
 FIGURES_DIR = Path(__file__).resolve().parents[1] / "reports" / "figures"
-METRICS_DIR.mkdir(parents=True, exist_ok=True)
-FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _saida(base: Path, subdir: str | None) -> Path:
+    """Diretório de saída; com subdir, grava em reports/<base>/<subdir>/."""
+    destino = base / subdir if subdir else base
+    destino.mkdir(parents=True, exist_ok=True)
+    return destino
 
 
 def evaluate_model(
@@ -33,6 +38,7 @@ def evaluate_model(
     X_test: pd.DataFrame,
     y_test: pd.Series,
     save: bool = True,
+    subdir: str | None = None,
 ) -> dict:
     """
     Avalia um modelo treinado e retorna/salva métricas.
@@ -49,6 +55,9 @@ def evaluate_model(
         Rótulos verdadeiros.
     save : bool
         Se True, salva métricas e gráficos em reports/.
+    subdir : str | None
+        Subpasta do dataset dentro de reports/metrics e reports/figures
+        (ex.: "siasi" ou "maternal_risk"). None grava na raiz dessas pastas.
 
     Retorna
     -------
@@ -80,22 +89,23 @@ def evaluate_model(
 
     if save:
         # Salva métricas em JSON
-        out_json = METRICS_DIR / f"{name}_metrics.json"
+        destino = _saida(METRICS_DIR, subdir)
+        out_json = destino / f"{name}_metrics.json"
         with open(out_json, "w", encoding="utf-8") as fp:
             json.dump({k: v for k, v in metrics.items() if k != "classification_report"}, fp, indent=2)
         print(f"Métricas salvas em: {out_json}")
 
         # Salva classification report em TXT
-        out_txt = METRICS_DIR / f"{name}_classification_report.txt"
+        out_txt = destino / f"{name}_classification_report.txt"
         out_txt.write_text(report_str, encoding="utf-8")
 
         # Matriz de confusão
-        _plot_confusion_matrix(name, y_test, y_pred)
+        _plot_confusion_matrix(name, y_test, y_pred, subdir=subdir)
 
     return metrics
 
 
-def _plot_confusion_matrix(name: str, y_test, y_pred) -> None:
+def _plot_confusion_matrix(name: str, y_test, y_pred, subdir: str | None = None) -> None:
     """Plota e salva a matriz de confusão."""
     cm = confusion_matrix(y_test, y_pred)
     labels = np.unique(np.concatenate([y_test, y_pred]))
@@ -115,13 +125,13 @@ def _plot_confusion_matrix(name: str, y_test, y_pred) -> None:
     ax.set_title(f"Matriz de Confusão — {name}")
     plt.tight_layout()
 
-    out = FIGURES_DIR / f"{name}_confusion_matrix.png"
+    out = _saida(FIGURES_DIR, subdir) / f"{name}_confusion_matrix.png"
     fig.savefig(out, dpi=150)
     plt.close(fig)
     print(f"Matriz de confusão salva em: {out}")
 
 
-def compare_models(metrics_list: list[dict]) -> pd.DataFrame:
+def compare_models(metrics_list: list[dict], subdir: str | None = None) -> pd.DataFrame:
     """
     Cria tabela comparativa de métricas entre modelos.
 
@@ -129,6 +139,8 @@ def compare_models(metrics_list: list[dict]) -> pd.DataFrame:
     ----------
     metrics_list : list[dict]
         Lista de dicionários retornados por evaluate_model().
+    subdir : str | None
+        Subpasta do dataset dentro de reports/metrics.
 
     Retorna
     -------
@@ -148,7 +160,7 @@ def compare_models(metrics_list: list[dict]) -> pd.DataFrame:
     print("\n=== Comparação de Modelos ===")
     print(df_cmp.to_string())
 
-    out = METRICS_DIR / "models_comparison.csv"
+    out = _saida(METRICS_DIR, subdir) / "models_comparison.csv"
     df_cmp.to_csv(out)
     print(f"\nComparação salva em: {out}")
     return df_cmp

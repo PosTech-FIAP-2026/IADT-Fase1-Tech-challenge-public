@@ -1,7 +1,7 @@
 """
 explain.py
 Explicabilidade dos modelos treinados usando feature importance e SHAP.
-Exporta gráficos em reports/figures/.
+Exporta gráficos em reports/figures/<subdir>/, onde subdir identifica o dataset.
 """
 
 from pathlib import Path
@@ -12,7 +12,13 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 
 FIGURES_DIR = Path(__file__).resolve().parents[1] / "reports" / "figures"
-FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _saida(subdir: str | None) -> Path:
+    """Diretório de saída; com subdir, grava em reports/figures/<subdir>/."""
+    destino = FIGURES_DIR / subdir if subdir else FIGURES_DIR
+    destino.mkdir(parents=True, exist_ok=True)
+    return destino
 
 MAX_DISPLAY = 20   # Máximo de features exibidas nos gráficos
 
@@ -21,6 +27,7 @@ def plot_feature_importance(
     name: str,
     pipeline: Pipeline,
     feature_names: list[str] | None = None,
+    subdir: str | None = None,
 ) -> None:
     """
     Plota e salva a importância de features para modelos baseados em árvore.
@@ -34,6 +41,8 @@ def plot_feature_importance(
         Pipeline sklearn já treinado.
     feature_names : list[str] | None
         Nomes das features após pré-processamento.
+    subdir : str | None
+        Subpasta do dataset dentro de reports/figures (ex.: "siasi").
     """
     model = pipeline.named_steps.get("model")
     if model is None or not hasattr(model, "feature_importances_"):
@@ -54,7 +63,7 @@ def plot_feature_importance(
     ax.set_title(f"Feature Importance — {name}")
     plt.tight_layout()
 
-    out = FIGURES_DIR / f"{name}_feature_importance.png"
+    out = _saida(subdir) / f"{name}_feature_importance.png"
     fig.savefig(out, dpi=150)
     plt.close(fig)
     print(f"Feature importance salva em: {out}")
@@ -66,6 +75,7 @@ def plot_shap(
     X_sample: pd.DataFrame,
     feature_names: list[str] | None = None,
     max_samples: int = 200,
+    subdir: str | None = None,
 ) -> None:
     """
     Calcula e plota valores SHAP (global summary + local waterfall) do modelo.
@@ -83,6 +93,8 @@ def plot_shap(
         Nomes das features após pré-processamento.
     max_samples : int
         Número máximo de amostras para cálculo do SHAP (desempenho).
+    subdir : str | None
+        Subpasta do dataset dentro de reports/figures (ex.: "siasi").
     """
     try:
         import shap
@@ -137,7 +149,7 @@ def plot_shap(
         show=False,
         plot_type="bar",
     )
-    out_summary = FIGURES_DIR / f"{name}_shap_summary.png"
+    out_summary = _saida(subdir) / f"{name}_shap_summary.png"
     plt.tight_layout()
     plt.savefig(out_summary, dpi=150, bbox_inches="tight")
     plt.close()
@@ -156,7 +168,7 @@ def plot_shap(
         )
         fig2, _ = plt.subplots(figsize=(10, 6))
         shap.waterfall_plot(exp, show=False)
-        out_local = FIGURES_DIR / f"{name}_shap_local.png"
+        out_local = _saida(subdir) / f"{name}_shap_local.png"
         plt.tight_layout()
         plt.savefig(out_local, dpi=150, bbox_inches="tight")
         plt.close(fig2)

@@ -8,14 +8,12 @@ O Tech Challenge é o projeto que engloba os conhecimentos obtidos em todas as d
 
 ## Visão Geral
 
-Pipeline completo de **Machine Learning** para classificação de risco gestacional, aplicado a dois datasets públicos de saúde da mulher:
+Pipeline completo de Machine Learning para classificação de risco gestacional, aplicado a dois datasets públicos de saúde da mulher:
 
-1. **SIASI - Acompanhamento Gestacional** (estudo principal): microdados reais do pré-natal na saúde indígena brasileira, com 127.281 consultas de 19.945 gestações (2024). Inclui uma **comparação pré/pós-pandemia** entre as bases de 2019 e 2024.
+1. **SIASI - Acompanhamento Gestacional** (estudo principal): microdados reais do pré-natal na saúde indígena brasileira, com 127.281 consultas de 19.945 gestações (2024). Inclui uma comparação entre as bases de 2019 e 2024, anterior e posterior à pandemia.
 2. **Maternal Health Risk** (estudo comparativo): 1.014 gestantes com sinais vitais medidos (pressão, glicemia, temperatura, frequência cardíaca), usado para dimensionar o ganho de desempenho quando variáveis clínicas estão disponíveis.
 
 O fluxo cobre EDA sobre os dados brutos > engenharia de features derivadas > análise pós-tratamento > pré-processamento sem vazamento de dados > dois modelos comparados (com estudo de ablação) > avaliação > explicabilidade (Feature Importance e SHAP).
-
-> **Uso responsável**: os modelos são **suporte à decisão**, nunca substituindo a avaliação de um profissional de saúde. O médico sempre deve ter a palavra final no diagnóstico.
 
 ---
 
@@ -23,8 +21,8 @@ O fluxo cobre EDA sobre os dados brutos > engenharia de features derivadas > an�
 
 | Dataset | Fonte | Arquivos |
 |---|---|---|
-| SIASI - Acompanhamento Gestacional | [dados.gov.br](https://dados.gov.br/dados/conjuntos-dados/acompanhamento-gestacional-siasi) | `prenatal_microdados_2024.csv` e `prenatal_microdados_2019.csv` (**já incluído** em `data/siasi/raw/`) |
-| Maternal Health Risk | [Kaggle](https://www.kaggle.com/datasets/csafrit2/maternal-health-risk-data) | `maternal_health_risk_data_set.csv` (**já incluído** em `data/maternal_risk/raw/`) |
+| SIASI - Acompanhamento Gestacional | [dados.gov.br](https://dados.gov.br/dados/conjuntos-dados/acompanhamento-gestacional-siasi) | `prenatal_microdados_2024.csv` e `prenatal_microdados_2019.csv` (já incluídos em `data/siasi/raw/`) |
+| Maternal Health Risk | [Kaggle](https://www.kaggle.com/datasets/csafrit2/maternal-health-risk-data) | `maternal_health_risk_data_set.csv` (já incluído em `data/maternal_risk/raw/`) |
 
 ---
 
@@ -54,7 +52,7 @@ IADT-Fase1-Tech-challenge/
 └── README.md
 ```
 
-Os dois notebooks estão **executados de ponta a ponta** com os outputs gravados - os resultados podem ser conferidos sem rodar nada.
+Os dois notebooks estão executados de ponta a ponta, com os outputs gravados - os resultados podem ser conferidos sem rodar nada.
 
 ---
 
@@ -88,7 +86,7 @@ jupyter notebook notebooks/01_eda_modelagem.ipynb
 jupyter notebook notebooks/02_maternal_risk.ipynb
 ```
 
-Usar **Run All** - a execução completa do notebook 01 leva alguns minutos (dois treinamentos + ablação + SHAP).
+Usar Run All - a execução completa do notebook 01 leva alguns minutos (dois treinamentos + ablação + SHAP).
 
 Os módulos em `src/` são as funções reutilizáveis que os notebooks importam (carga, pré-processamento, avaliação e explicabilidade) - toda a execução acontece pelos notebooks.
 
@@ -98,14 +96,14 @@ Os módulos em `src/` são as funções reutilizáveis que os notebooks importam
 
 ### Particularidades do dataset tratadas no pipeline
 
-- **Cada linha é uma consulta, não uma gestante** (~6,4 consultas por gestação) > divisão treino/teste **por gestação** com `GroupShuffleSplit`, evitando que a mesma gestante apareça em treino e teste (data leakage).
-- **Colunas de finalização** (`data_finalizacao`, `motivo_finalizacao`) só existem ao fim da gestação > excluídas das features.
-- **14,1% das consultas sem rótulo de risco**: padrão estrutural (100% dos atendimentos de dentistas/nutricionistas/técnicos não classificam risco, contra 0% dos de médicos/enfermeiros) > registros descartados com justificativa.
-- **26 colunas renomeadas** do padrão SIASI (`co_`, `ds_`, `dt_`, `st_`) para nomes autoexplicativos.
+- Cada linha é uma consulta, não uma gestante (~6,4 consultas por gestação) > divisão treino/teste **por gestação** com `GroupShuffleSplit`, evitando que a mesma gestante apareça em treino e teste (data leakage).
+- As colunas de finalização (`data_finalizacao`, `motivo_finalizacao`) só existem ao fim da gestação > excluídas das features.
+- 14,1% das consultas não têm rótulo de risco, por um padrão estrutural (100% dos atendimentos de dentistas/nutricionistas/técnicos não classificam risco, contra 0% dos de médicos/enfermeiros) > registros descartados com justificativa.
+- As 26 colunas foram renomeadas do padrão SIASI (`co_`, `ds_`, `dt_`, `st_`) para nomes autoexplicativos.
 
 ### Engenharia de features derivadas
 
-As datas (armazenadas como texto) são convertidas em 7 variáveis clínicas: `idade_gestante`, `idade_gestacional_semanas`, `num_consulta` (contagem cumulativa - apenas o passado), `semana_inicio_prenatal`, `trimestre_inicio_prenatal`, `atendida_por_medico` e `atendida_por_enfermeiro`. Um **estudo de ablação** quantifica a contribuição: o F1 da árvore sobe de 0,48 para 0,65 com essas variáveis.
+As datas (armazenadas como texto) são convertidas em 7 variáveis clínicas: `idade_gestante`, `idade_gestacional_semanas`, `num_consulta` (contagem cumulativa - apenas o passado), `semana_inicio_prenatal`, `trimestre_inicio_prenatal`, `atendida_por_medico` e `atendida_por_enfermeiro`. Um estudo de ablação quantifica a contribuição: o F1 da árvore sobe de 0,48 para 0,65 com essas variáveis.
 
 ### Pré-processamento
 
@@ -122,7 +120,7 @@ As datas (armazenadas como texto) são convertidas em 7 variáveis clínicas: `i
 
 ### Avaliação e explicabilidade
 
-Accuracy é enganosa com classes desbalanceadas (84,5% de baixo risco) - a métrica priorizada é o **recall da classe A** (alto risco), complementada pelo F1 weighted. Explicabilidade com feature importance e SHAP (summary global + waterfall local).
+Accuracy é enganosa com classes desbalanceadas (84,5% de baixo risco) - a métrica priorizada é o recall da classe A (alto risco), complementada pelo F1 weighted. Explicabilidade com feature importance e SHAP (summary global + waterfall local).
 
 ---
 
@@ -135,9 +133,9 @@ Accuracy é enganosa com classes desbalanceadas (84,5% de baixo risco) - a métr
 | Regressão Logística | 0,636 | 0,617 | 0,243 | 0,684 |
 | **Árvore de Decisão** | 0,598 | **0,791** | 0,253 | 0,652 |
 
-- A árvore identifica **79% das gestações de alto risco** - modelo recomendado para triagem.
-- **`idade_gestante` responde por ~52% das decisões**, seguida de variáveis territoriais (~44%).
-- Curiosidade metodológica: a idade tem correlação linear de só 0,09 com o alvo (relação em U), mas é a feature nº 1 - por isso correlação baixa não foi critério de descarte.
+- A árvore identifica 79% das gestações de alto risco e é o modelo recomendado para triagem, já que o erro grave neste problema é o falso negativo.
+- `idade_gestante` responde por cerca de 52% das decisões, seguida das variáveis territoriais (~44%).
+- A idade tem correlação linear de apenas 0,09 com o alvo (a relação é em U) e ainda assim é a feature mais importante - por isso correlação baixa não foi usada como critério de descarte.
 
 ### Comparação 2019 × 2024 (pré/pós-pandemia)
 
@@ -150,16 +148,18 @@ O acompanhamento se intensificou (5,1 > 6,4 consultas/gestação, início do pr�
 | Regressão Logística | 0,601 | 0,800 | 0,710 |
 | **Árvore de Decisão** | **0,685** | **0,855** | **0,887** |
 
-A lição central do trabalho: com metodologia idêntica, **a natureza das variáveis define o teto de desempenho** - dados administrativos permitem triagem sensível mas imprecisa; dados clínicos elevam a precisão a nível assistencial.
+A lição central do trabalho: com metodologia idêntica, a natureza das variáveis define o teto de desempenho - dados administrativos permitem triagem sensível mas imprecisa; dados clínicos elevam a precisão a nível assistencial.
 
 ---
 
-## Limitações e Uso Responsável
+## Limitações
 
-1. **Suporte à decisão**: o modelo prioriza a fila de atenção; a palavra final é sempre do profissional de saúde.
-2. **Dados administrativos**: sem variáveis clínicas; o rótulo reflete o julgamento do profissional na consulta (e seus eventuais vieses).
-3. **Viés de cobertura**: gestantes fora do subsistema de saúde indígena não estão representadas.
-4. **Peso territorial ambíguo**: pode refletir epidemiologia real ou diferenças de critério entre equipes dos DSEIs.
+1. Dados administrativos, sem variáveis clínicas; o rótulo reflete o julgamento do profissional na consulta, e seus eventuais vieses.
+2. Viés de cobertura: gestantes fora do subsistema de saúde indígena não estão representadas.
+3. Peso territorial ambíguo: pode refletir epidemiologia real ou diferenças de critério entre as equipes dos DSEIs.
+4. A classe intermediária do Maternal Health Risk é mal separada (recall de 0,284), e 562 das 1.014 linhas daquele dataset são duplicatas exatas.
+
+O resultado do modelo é uma priorização da fila de atendimento; a decisão sobre o risco de cada gestante é do profissional de saúde.
 
 ---
 

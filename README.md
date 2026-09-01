@@ -38,7 +38,7 @@ IADT-Fase1-Tech-challenge/
 │       ├── raw/           ← Dataset Maternal Health Risk (kaggle)
 │       └── processed/     ← Dataset tratado (gerado pelo notebook 02)
 ├── notebooks/
-│   ├── 01_eda_modelagem.ipynb   ← Estudo principal (SIASI): EDA + features + modelos + SHAP
+│   ├── 01_siasi.ipynb   ← Estudo principal (SIASI): EDA + features + modelos + SHAP
 │   └── 02_maternal_risk.ipynb   ← Estudo comparativo (dados clínicos)
 ├── src/
 │   ├── data_loader.py     ← Carregamento e validação dos dados

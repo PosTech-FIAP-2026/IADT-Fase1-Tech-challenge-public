@@ -83,7 +83,7 @@ pip install -r requirements.txt
 ### 3. Executar os notebooks (fluxo principal)
 
 ```bash
-jupyter notebook notebooks/01_eda_modelagem.ipynb
+jupyter notebook notebooks/01_siasi.ipynb
 ```
 
 ```bash
